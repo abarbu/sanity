@@ -244,36 +244,6 @@
                                 (do (.append sb ch) (recur (- level 1)))))
            (else (.append sb ch) (recur level)))))))
 
-(defn escaping-balanced-string-reader [^Reader r start-char end-char escape]
- "A reader macro for reading a literal string which must start with
-  start-token and end with end-token. escape is either a character or
-  a list of two character which can be used to unquote."
- (when (and escape (seq? escape) (> (count escape) 2))
-  (error "Can only handle at most 2 escape characters"))
- (let ((sb (StringBuilder.)))
-  (let ((ch (char (LispReader/read1 r))))
-   (unless (= ch start-char)
-    (error (str "Must start with '" start-char "' not '" ch "'" ))))
-  (loop ((level 0))
-   (let ((ch (char (LispReader/read1 r))))
-    (conds
-      ((= ch start-char) (.append sb ch) (recur (+ level 1)))
-      ((= ch end-char) (if (= level 0)
-                        (.toString sb)
-                        (do (.append sb ch) (recur (- level 1)))))
-     ((or (= escape ch) (and (seq? escape)
-                             (= (first escape) ch)
-                             (= (length escape) 1)))
-      (.append sb (str (eval (read r))))
-      (recur level))
-     ((and (seq? escape) (= ch (first escape)))
-      (let ((ch' (.read r)))
-       (if (= (char ch') (second escape))
-        (.append sb (str (eval (read r))))
-        (do (.append sb ch) (.unread r ch')))
-       (recur level)))
-     (else (do (.append sb ch) (recur level))))))))
-
 ;;; Workaround for broken quasiquote
 ;; Much of this is transliterated from LispReader.java
 
