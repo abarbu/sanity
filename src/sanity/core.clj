@@ -26,7 +26,7 @@
    ~@(if (list? head)
       (list (first head) (vec (replace {'. '&} (rest head))))
       (if (dynamic-symbol? head)
-       (list ^:dynamic head)
+       (list (with-meta head {:dynamic true}))
        (list head)))
    ~@ body))
 
@@ -371,6 +371,7 @@
 (defn abs [x] (Math/abs x))
 (defn round [^double x] (Math/round x))
 (defn floor [x] (Math/floor x))
+(defn ceil [x] (Math/ceil x))
 
 (defn sqr [x] "Square the given number" (* x x))
 
@@ -560,7 +561,7 @@
              (recur (- n 1) (* c (f n))))))
           (fn? a) (apply map-reduce * 1 a l ls))))
 
-(defn map-pairs [f l] (map f (rest l) l))
+(defn map-pairs [f l] (map (fn [b a] (f a b)) (rest l) l))
 
 (defn every? [p l & ls]
  "Is p true of every element of the collection(s) l(s)?"
