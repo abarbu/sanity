@@ -2,11 +2,13 @@
 
 Available from clojars:
 
-    [com._0xab/sanity "1.0.0"]
+    [com._0xab/sanity "1.1.0"]
 
 Use with:
 
     (use 'sanity.core)
+    (use 'sanity.improvements)
+    (use 'sanity.reader)
 
 Sanity fixes some issues with Clojure's semantics and syntax, fills in
 some missing parts of the standard API, fixes \` by adding a sane

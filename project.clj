@@ -1,4 +1,4 @@
-(defproject com._0xab/sanity "1.0.0"
+(defproject com._0xab/sanity "1.1.0"
  :description "Fixes a number of problems with Clojure semantics and syntax and fills in some missing functionality"
  :url "https://github.com/abarbu/sanity"
  :license {:name "Eclipse Public License"
@@ -13,4 +13,6 @@
                 ;; but this is the original dev
                 [org.clojars.rosejn/clansi "1.2.0-SNAPSHOT"]]
  :codox {:src-dir-uri "http://github.com/abarbu/sanity/blob/master/"
-         :src-linenum-anchor-prefix "L"})
+         :src-linenum-anchor-prefix "L"}
+ :scm {:name "git"
+       :url "https://github.com/abarbu/sanity"})
