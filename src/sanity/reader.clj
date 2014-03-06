@@ -148,11 +148,12 @@
              nil
              (str
               (.getName
-               (compiler-resolve-symbol nil (Symbol/intern
-                                             nil
-                                             (.substring (.getName sym)
-                                                         0
-                                                         (- (.length (.getName sym)) 1)))))
+               (compiler-resolve-symbol
+                nil (Symbol/intern
+                     nil
+                     (.substring (.getName sym)
+                                 0
+                                 (- (.length (.getName sym)) 1)))))
               ".")))
            ((and (nil? (.getNamespace sym)) (.startsWith (.getName sym) "."))
             ;; Simply quote method names
