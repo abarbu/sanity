@@ -22,8 +22,8 @@
  "Similar to Scheme's define. Rest arguments must be marked by '&' not '.'
   Automatically generates def vs defn (with or without dynamic) as needed."
  [head & body]
- `(~(if (list? head) 'defn 'def)
-   ~@(if (list? head)
+ `(~(if (seq? head) 'defn 'def)
+   ~@(if (seq? head)
       (list (first head) (vec (replace {'. '&} (rest head))))
       (if (dynamic-symbol? head)
        (list (with-meta head {:dynamic true}))
@@ -42,7 +42,7 @@
   therein. Augmented to support sane (lisp/scheme) bracketing."
  [bindings & body]
  `(clojure.core/let
-    ~(if (list? bindings) (into [] (reduce concat bindings)) bindings)
+    ~(if (seq? bindings) (into [] (reduce concat bindings)) bindings)
    ~@body))
 
 (defmacro loop
@@ -52,7 +52,7 @@
   bracketing."
  [bindings & body]
  `(clojure.core/loop
-    ~(if (list? bindings) (into [] (reduce concat bindings)) bindings)
+    ~(if (seq? bindings) (into [] (reduce concat bindings)) bindings)
    ~@body))
 
 (defmacro conds
