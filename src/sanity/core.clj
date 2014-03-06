@@ -154,6 +154,7 @@
 (defn round [^double x] (Math/round x))
 (defn floor [x] (Math/floor x))
 (defn ceil [x] (Math/ceil x))
+(define (ceiling x) (Math/ceil x))
 
 (defn sqr [x] "Square the given number" (* x x))
 
@@ -518,6 +519,11 @@ implemented in terms of a left fold and reduce."
 
 (def car first)
 (def cdr rest)
+(define (caar a) (car (car a)))
+(define (cadar a) (car (cdr (car a))))
+(define (cddr a) (cdr (cdr a)))
+(define (cadr a) (car (cdr a)))
+(define (cdddr a) (cdr (cdr (cdr a))))
 
 (defn format* [& more] "format and print" (print (apply format more)))
 
