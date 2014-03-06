@@ -129,20 +129,25 @@
         (RT/list
          compiler-quote
          (let [sym (cast Symbol form)]
-          (conds ((and (nil? (.getNamespace sym)) (.endsWith (.getName sym) "#"))
-                  (let [gmap (.deref lisp-gensym-env)]
-                   (when (nil? gmap)
-                    (throw (IllegalStateException. "Gensym literal not in syntax-quote")))
-                   (let [gs (cast Symbol (.valAt gmap sym))]
-                    (if (nil? gs)
-                     (.set lisp-gensym-env
-                           (.assoc gmap sym
-                                   (Symbol/intern
-                                    nil
-                                    (.substring (.getName sym)
-                                                0
-                                                (- (.length (.getName sym)) 1)))))
-                     gs))))
+          (conds
+            ((and (nil? (.getNamespace sym)) (.endsWith (.getName sym) "#"))
+             (let [gmap (.deref lisp-gensym-env)]
+              (when (nil? gmap)
+               (throw (IllegalStateException. "Gensym literal not in syntax-quote")))
+              (let [gs (cast Symbol (.valAt gmap sym))]
+               (if (nil? gs)
+                (let ((gs (Symbol/intern
+                           nil
+                           (str
+                            (.substring (.getName sym)
+                                        0
+                                        (- (.length (.getName sym)) 1))
+                            "__"
+                            (clojure.lang.RT/nextID)
+                            "__auto__"))))
+                 (.set lisp-gensym-env (.assoc gmap sym gs))
+                 gs)
+                gs))))
            ((and (nil? (.getNamespace sym)) (.endsWith (.getName sym) "."))
             (Symbol/intern
              nil
