@@ -125,27 +125,40 @@
    [ret
     (conds ((.containsKey Compiler/specials form) (RT/list compiler-quote form))
       ((instance? Symbol form)
-       (do (let [sym (cast Symbol form)]
-            (conds ((and (nil? (.getNamespace sym)) (.endsWith (.getName sym) "#"))
-                    (let [gmap (.deref lisp-gensym-env)]
-                     (when (nil? gmap) (throw (IllegalStateException. "Gensym literal not in syntax-quote")))
-                     (let [gs (cast Symbol (.valAt gmap sym))]
-                      (if (nil? gs)
-                       (.set lisp-gensym-env
-                             (.assoc gmap sym
-                                     (.intern Symbol nil (.substring (.getName sym) 0 (.length (.getName sym))))))
-                       gs))))
-              ((and (nil? (.getNamespace sym)) (.endsWith (.getName sym) "."))
-               (Symbol/intern
-                nil (str (.getName (compiler-resolve-symbol nil (.intern Symbol nil
-                                                                         (.substring (.getName sym)
-                                                                                     0
-                                                                                     (.length (.getName sym)))))) ".")))
-             ((and (nil? (.getNamespace sym)) (.startsWith (.getName sym) "."))
-              ;; Simply quote method names
-              nil)
-             (else ;; This has been modified to not qualify the symbol
-              (RT/list compiler-quote sym))))))
+       (do
+        (RT/list
+         compiler-quote
+         (let [sym (cast Symbol form)]
+          (conds ((and (nil? (.getNamespace sym)) (.endsWith (.getName sym) "#"))
+                  (let [gmap (.deref lisp-gensym-env)]
+                   (when (nil? gmap)
+                    (throw (IllegalStateException. "Gensym literal not in syntax-quote")))
+                   (let [gs (cast Symbol (.valAt gmap sym))]
+                    (if (nil? gs)
+                     (.set lisp-gensym-env
+                           (.assoc gmap sym
+                                   (Symbol/intern
+                                    nil
+                                    (.substring (.getName sym)
+                                                0
+                                                (- (.length (.getName sym)) 1)))))
+                     gs))))
+           ((and (nil? (.getNamespace sym)) (.endsWith (.getName sym) "."))
+            (Symbol/intern
+             nil
+             (str
+              (.getName
+               (compiler-resolve-symbol nil (Symbol/intern
+                                             nil
+                                             (.substring (.getName sym)
+                                                         0
+                                                         (.length (.getName sym))))))
+              ".")))
+           ((and (nil? (.getNamespace sym)) (.startsWith (.getName sym) "."))
+            ;; Simply quote method names
+            nil)
+           (else ;; This has been modified to not qualify the symbol
+            sym))))))
      ((isUnquote form) (RT/second form))
      ((isUnquoteSplicing form) (throw (IllegalStateException. "splice not in a list")))
      ((instance? IPersistentCollection form)
