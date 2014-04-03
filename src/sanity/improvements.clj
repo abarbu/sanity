@@ -1,5 +1,6 @@
 (ns sanity.improvements
  "Various improvements to clojure"
+ (:refer-clojure :exclude [let loop count])
  (:require [clojure.tools.macro :refer [name-with-attributes]]
            [clojure.walk :refer [prewalk]]
            [net.n01se.clojure-jna :as jna]
@@ -16,7 +17,7 @@
 (defn dynamic-symbol? [^clojure.lang.Symbol s]
  (and (.startsWith (.getName s) "*")
       (.endsWith (.getName s) "*")
-      (> (count (.getName s)) 2)))
+      (> (clojure.core/count (.getName s)) 2)))
 
 (defmacro define
  "Similar to Scheme's define. Rest arguments must be marked by '&' not '.'
@@ -64,8 +65,8 @@
   nil
   (let ((as (into [] (reduce concat (map (fn [[h & ys]] (list h (cons 'do ys)))
                                          args))))
-        (r (if (= (nth as (- (count as) 2)) 'else)
-            (assoc as (- (count as) 2) ':else)
+        (r (if (= (nth as (- (clojure.core/count as) 2)) 'else)
+            (assoc as (- (clojure.core/count as) 2) ':else)
             as)))
    `(cond ~@r))))
 
@@ -78,8 +79,8 @@
   nil
   (let ((as (into [] (reduce concat (map (fn [[h & ys]] (list h (cons 'do ys)))
                                          args))))
-        (r (if (= (nth as (- (count as) 2)) 'else)
-            (concat (take (- (count as) 2) as) (list (last as))) 
+        (r (if (= (nth as (- (clojure.core/count as) 2)) 'else)
+            (concat (take (- (clojure.core/count as) 2) as) (list (last as)))
             as)))
    `(case ~obj ~@r))))
 

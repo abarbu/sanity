@@ -1,5 +1,6 @@
 (ns sanity.core
  "Various improvements to clojure"
+ (:refer-clojure :exclude [every?])
  (:require [clojure.tools.macro :refer [name-with-attributes]]
            [clojure.walk :refer [prewalk]]
            [net.n01se.clojure-jna :as jna]

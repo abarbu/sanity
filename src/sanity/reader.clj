@@ -162,7 +162,7 @@
               ".")))
            ((and (nil? (.getNamespace sym)) (.startsWith (.getName sym) "."))
             ;; Simply quote method names
-            nil)
+            sym)
            (else ;; This has been modified to not qualify the symbol
             sym))))))
      ((isUnquote form) (RT/second form))
