@@ -1,4 +1,4 @@
-(defproject com._0xab/sanity "1.3.0"
+(defproject com._0xab/sanity "1.4.0"
  :description "Fixes a number of problems with Clojure semantics and syntax and fills in some missing functionality"
  :url "https://github.com/abarbu/sanity"
  :license {:name "Eclipse Public License"

@@ -338,13 +338,6 @@
 
 (defn map-pairs [f l] (map (fn [b a] (f a b)) (rest l) l))
 
-(defn every? [p l & ls]
- "Is p true of every element of the collection(s) l(s)?"
- (loop [l l ls ls]
-  (or (null? l)
-      (and (apply p (first l) (map first ls))
-           (recur (rest l) (map rest ls))))))
-
 (define (every-other list)
  "Take every other element of a list."
  (conds ((null? list) '())
