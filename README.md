@@ -35,8 +35,6 @@ behaviour otherwise).
 Individual functions are mostly documented, but this project as a
 whole does not yet have documentation.
 
-At the moment loading this package causes a number of warnings.
-
 ## License
 
 Copyright © 2014 Andrei Barbu
