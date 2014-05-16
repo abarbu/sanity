@@ -2,13 +2,15 @@
 
 Available from clojars:
 
-    [com._0xab/sanity "1.1.0"]
+```clojure
+[com._0xab/sanity "1.4.0"]
+```
 
 Use with:
 
-    (use 'sanity.core)
-    (use 'sanity.improvements)
-    (use 'sanity.reader)
+```clojure
+(use '[sanity core improvements reader])
+```
 
 Sanity fixes some issues with Clojure's semantics and syntax, fills in
 some missing parts of the standard API, fixes \` by adding a sane
@@ -19,8 +21,10 @@ It provides combine-namespaces which takes a name along with one or
 more namespaces, unions those namespaces and exposes them all under
 the given name. Particularly useful with incanter and loom:
 
-    (combine-namespaces i incanter.core incanter.io incanter.optimize incanter.stats)
-    (combine-namespaces l loom.graph loom.alg loom.gen loom.attr loom.label loom.io)
+```clojure
+(combine-namespaces i incanter.core incanter.io incanter.optimize incanter.stats)
+(combine-namespaces l loom.graph loom.alg loom.gen loom.attr loom.label loom.io)
+```
 
 It adds syntax for #\`. This is a quasiquote and works just like \`
 except that it does not qualify symbols with the current namespace.
