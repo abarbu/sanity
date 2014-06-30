@@ -119,6 +119,11 @@
                 as)]
             `(cond ~@r))))
 
+(defmacro unless
+ "Evaluates test. If not true, evaluates body. The opposite of when."
+ [test & body]
+ (list 'if-not test (cons 'do body)))
+
 (defmacro cases
  "A variant of case with sane (lisp/scheme) bracketing. Unfortunately there's
   no way to detect if we want the clojure case or the sane case so we have to
@@ -143,11 +148,6 @@
  [current *ns*]
  (binding [*ns* (create-ns 'clojure.core)]
   (eval '(do
-
-          (defmacro unless
-           "Evaluates test. If not true, evaluates body. The opposite of when."
-           [test & body]
-           (list 'if-not test (cons 'do body)))
 
           (defmacro let
            "binding => binding-form init-expr
