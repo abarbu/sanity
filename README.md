@@ -2,9 +2,7 @@
 
 Available from clojars:
 
-```clojure
-[com._0xab/sanity "1.4.0"]
-```
+[![Clojars Project](http://clojars.org/com._0xab/sanity/latest-version.svg)](https://clojars.org/com._0xab/sanity)
 
 Use with:
 
