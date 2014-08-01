@@ -94,16 +94,23 @@
       (> (core-count (.getName s)) 2)))
 
 (defmacro define
- "Similar to Scheme's define. Rest arguments must be marked by '&' not '.'
-  Automatically generates def vs defn (with or without dynamic) as needed."
- [head & body]
+ "Similar to Scheme's define. Automatically generates def vs defn (with or
+  without dynamic) as needed. Docstrings come after the head of the define, as
+  in (define (a) docstring? b)"
+ [head docstring? & body]
  `(~(if (seq? head) 'defn 'def)
    ~@(if (seq? head)
-      (list (first head) (vec (replace {'. '&} (rest head))))
-      (if (dynamic-symbol? head)
+      `(~(first head)
+        ~@(if (and (string? docstring?) (not (empty? body)))
+           (list docstring?)
+           '())
+        ~(vec (replace {'. '&} (rest head))))
+      (if (sanity.improvements/dynamic-symbol? head)
        (list (with-meta head {:dynamic true}))
        (list head)))
-   ~@ body))
+   ~@(if (and (seq? head) (string? docstring?))
+      body
+      (cons docstring? body))))
  
 (defmacro conds
  "A variant of cond with sane (lisp/scheme) bracketing. Unfortunately there's

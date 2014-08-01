@@ -1,9 +1,9 @@
-(defproject com._0xab/sanity "1.5.0"
+(defproject com._0xab/sanity "1.6.0"
  :description "Fixes a number of problems with Clojure semantics and syntax and fills in some missing functionality"
  :url "https://github.com/abarbu/sanity"
  :license {:name "Eclipse Public License"
            :url "http://www.eclipse.org/legal/epl-v10.html"}
- :dependencies [[org.clojure/clojure "1.5.1"]
+ :dependencies [[org.clojure/clojure "1.6.0"]
                 [potemkin "0.3.4"]
                 [org.clojure/tools.macro "0.1.5"]
                 [me.raynes/fs "1.4.5"]
