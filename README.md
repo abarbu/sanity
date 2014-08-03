@@ -28,63 +28,29 @@ It adds syntax for #\`. This is a quasiquote and works just like \`
 except that it does not qualify symbols with the current namespace.
 This default behaviour leads to a lot of strange and broken code.  Try
 out \`a vs #\`a (you would need to do \`~'a to get this (sane)
-behaviour otherwise). #\` also handles
-```clojure
-#`(~@())
-```
-correctly and returns
-```clojure
-'()
-```
-instead of
-```clojure
-'(nil)
-```
-
+behaviour otherwise). #\` also handles ```clojure #`(~@())```
+correctly and returns ```clojure '()``` instead of ```clojure '(nil)```.
 
 Individual functions are mostly documented, but this project as a
 whole does not yet have documentation.
 
 Other broken behavior to hopefully be patched one day:
 
-* ```clojure
-(seq '())
-``` returns nil instead of failing. An example of where this
-  misguided propensity to return nil everywhere leads to trouble,
-  consider that
-  ```clojure
-  (cdr (cdr (seq [1 2])))
-  ```
-  and
-  ```clojure
-  (seq [])
-  ```
-  are paradoxically not
-  equal. seq should return the empty element of the collection, not
-  nil. This ripples out and causes many other bugs, including some in
-  the clojure compiler. An example is where
-```clojure
-    `(~@(map (fn [x] (+ x 1)) '(1 2 3)))
-```
-  returns, as expected
-```clojure
-    '(2 3 4)
-```
-  but as the list becomes empty we would expect
-```clojure
-    '()
-```
-  whereas instead you get something pretty broken
-```clojure
-    '(nil)
-```
+* ```clojure (seq '())``` returns nil instead of failing. An example
+  of where this misguided propensity to return nil everywhere leads to
+  trouble, consider that ```clojure (cdr (cdr (seq [1 2])))``` and
+  ```clojure (seq [])``` are paradoxically not equal. seq should
+  return the empty element of the collection, not nil. This ripples
+  out and causes many other bugs, including some in the clojure
+  compiler. An example is where ```clojure `(~@(map (fn [x] (+ x 1)) '(1 2 3)))```
+  returns, as expected ```clojure '(2 3 4)``` but as
+  the list becomes empty we would expect ```clojure '()``` whereas
+  instead you get something pretty broken ```clojure '(nil)```
   because of this sloppy seq behavior.
-* ```clojure :keyword ``` on a map without the given key returns nil instead of failing. This
+* ```clojure :keyword``` on a map without the given key returns nil instead of failing. This
   hides bugs and causes errors to appear far away from their real
   source.
-* ```clojure
-(first '())
-``` returns nil instead of failing.
+* ```clojure (first '())``` returns nil instead of failing.
 * The scoping of def and defn is broken yet for some reason they're
   still allowed outside the toplevel.
 * map mangles the type of object you pass in and always returns a lazy
