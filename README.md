@@ -40,7 +40,7 @@ instead of
 ```clojure
 '(nil)
 ```
-.
+
 
 Individual functions are mostly documented, but this project as a
 whole does not yet have documentation.
@@ -79,12 +79,9 @@ Other broken behavior to hopefully be patched one day:
     '(nil)
 ```
   because of this sloppy seq behavior.
-* ```clojure
-:keyword
-```
-on a map without the given key returns nil instead of failing. This
-hides bugs and causes errors to appear far away from their real
-source.
+* ```clojure :keyword ``` on a map without the given key returns nil instead of failing. This
+  hides bugs and causes errors to appear far away from their real
+  source.
 * ```clojure
 (first '())
 ``` returns nil instead of failing.
