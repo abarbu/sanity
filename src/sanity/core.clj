@@ -169,17 +169,18 @@
 (defn degrees->radians [angle] (* two-pi-360 angle))
 (defn radians->degrees [angle] (* three-sixty-two-pi angle))
 
-(defn normalize-rotation [rotation]
+(defn normalize-rotation 
  "Normalize a rotation in radians to be in the internal [π,-π)"
+ [rotation]
  (conds ((> rotation pi) (normalize-rotation (- rotation two-pi)))
    ((<= rotation minus-pi) (normalize-rotation (+ rotation two-pi)))
   (else rotation)))
-(defn rotation+ [x y] "Add two angles and normalize the result" (normalize-rotation (+ x y)))
-(defn rotation- [x y] "Subtract two angles and normalize the result" (normalize-rotation (- x y)))
-(defn angle-separation [x y] "Compute the separation between two angles"
+(defn rotation+ "Add two angles and normalize the result" [x y] (normalize-rotation (+ x y)))
+(defn rotation- "Subtract two angles and normalize the result" [x y] (normalize-rotation (- x y)))
+(defn angle-separation "Compute the separation between two angles" [x y]
  (min (abs (rotation- x y)) (abs (rotation- y x))))
 
-(defn orientation [v] "Computes the orientation of a vector in radians."
+(defn orientation  "Computes the orientation of a vector in radians." [v]
  (atan (nth v 1) (nth v 0)))
 
 ;;; Workarounds for strange semantics and missing basic functionality
@@ -196,21 +197,23 @@
      ;; This is required because ((fn [& a] a)) returns nil, not an empty collection
      (nil? c))) 
 
-(defn re-seq' [^java.util.regex.Pattern re s]
+(defn re-seq'
  "Returns a lazy sequence of successive matches of pattern in string.
   Similar to clojure.core/re-seq but produces the match groups as well as start and
   end indices. Returns a list of maps {:groups ... :start ... :end ...}"
+ [^java.util.regex.Pattern re s]
  (let [m (re-matcher (if (string? re) (re-pattern re) re) s)]
   ((fn step []
     (when (. m find)
      (cons {:groups (re-groups m) :start (. m start) :end (. m end)}
            (lazy-seq (step))))))))
 
-(defn re-seq:overlapping' [^java.util.regex.Pattern re s]
+(defn re-seq:overlapping'
  "Returns a lazy sequence of successive matches of pattern in string.
   Similar to clojure.core/re-seq but produces the match groups as well as start and
   end indices. Returns a list of maps {:groups ... :start ... :end ...}.
   It also handles overlapping matches correctly."
+ [^java.util.regex.Pattern re s]
  (map #(update-in % [:groups] rest) (re-seq' (str "(?=(" re "))") s)))
 
 (defn seqable?
@@ -224,7 +227,9 @@
      (string? x)
      (instance? java.util.Map x)))
 
-(defn substring? [sub ^String str] "Is the first argument a substring of the second?"
+(defn substring?
+ "Is the first argument a substring of the second?"
+ [sub ^String str] 
  (.contains str sub))
 (def substring
  "Alias for clojure.core/subs. ([str start-index] [str start-index end-index])"
@@ -238,8 +243,8 @@
 (defn eighth [x] (nth x 7))
 (defn ninth [x] (nth x 8))
 
-(defn string-prefix? [^String p ^String s] "Is the first argument a prefix of the second?" (.startsWith s p))
-(defn string-suffix? [^String p ^String s] "Is the first argument a suffix of the second?" (.endsWith s p))
+(defn string-prefix? "Is the first argument a prefix of the second?" [^String p ^String s] (.startsWith s p))
+(defn string-suffix? "Is the first argument a suffix of the second?" [^String p ^String s] (.endsWith s p))
 
 ;; TODO This needs a better implementation
 (defn for-each [f l] "map for side effects. Forces and discards the result." (dorun (map f l)))
@@ -266,43 +271,47 @@
  ([g f l] (reduce g (map f l)))
  ([g i f l & ls] (reduce g i (apply map f l ls))))
 
-(defn read-object-from-file [file]
+(defn read-object-from-file
  "Read a clojure object from the given file. Note that this uses the
  builtin reader and may be unsafe to run on untrusted
  files!"
+ [file]
  (read-string (slurp file)))
 
-(defn write-object-to-file [object file]
+(defn write-object-to-file
  "Write an object to a file. Sadly the object will not be
   pretty-printed because pprint is far too slow."
- ;; TODO Geeze.. this is slow.. pprint is painful
- ;; (let [w (StringWriter.)]
- ;;  (pprint object w)
- ;;  (spit file (.toString w)))
+ [object file]
  (spit file object))
 
-(defn zip [a b & cs]
+(defn zip
  "Zip two or more lists into ne"
+ [a b & cs]
  (map reverse (reduce (lambda (a b) (map cons b a)) (map list a) (cons b cs))))
 
-(defn unzip [l]
+(defn unzip
  "Unzip a list into a list of lists"
+ [l]
  (if (empty? l)
   '()
   (map-n (lambda (i) (map (lambda (e) (nth e i)) l)) (count (first l)))))
 
-(defn read-lines [filename]
+(defn read-lines
  "Read the file and split at newlines"
+ [filename]
  (s/split (slurp filename) #"\n"))
-(defn read-text-file [filename]
+(defn read-text-file
  "Alias for slurp"
+ [filename]
  (slurp filename))
 
-(defn write-lines [lines filename]
+(defn write-lines
  "Write a list of strings to a file inserting newlines"
+ [lines filename]
  (spit filename (s/join "\n" lines)))
-(defn write-text-file [s filename]
+(defn write-text-file
  "Alias for spit"
+ [s filename]
  (spit filename s))
 
 (defn sum
@@ -344,41 +353,49 @@
    ((null? (rest list)) list)
   (else (cons (first list) (every-other (rest (rest list)))))))
 
-(defn update-values [f m]
+(defn update-values
  "Map f over the values in the map m. A very inefficient operation at
   the moment."
+ [f m]
  (reduce (fn [r [k v]] (assoc r k (f v))) {} m))
 
-(defn map-linear [f s e n]
+(defn map-linear
  "Interpolate linearly between s and e with n steps and call f on each value."
+ [f s e n]
  (map-n (lambda (v) (f (+ s (* v (/ (- e s) n))))) (+ 1 n)))
 
-(defn strip-extension [^String path]
+(defn strip-extension
  "Remove the extension from a path."
+ [^String path]
  (let [i (.lastIndexOf path ".")]
   (if (pos? i) (subs path 0 i) path)))
 
-(defn strip-directory [^String path]
+(defn strip-directory
  "Remove the directory from a path."
+ [^String path]
  (fs/base-name path))
 
-(defn extension [^String path]
+(defn extension
  "Return the extension of a path."
+ [^String path]
  (s/join (rest (fs/extension path))))
 
-(defn replace-extension [^String path extension]
+(defn replace-extension
  "Replace the extension (add one if one does not exist) of a path."
+ [^String path extension]
  (let [i (.lastIndexOf path ".")]
   (if (pos? i)
    (str (subs path 0 i) "." extension)
    (str path "." extension))))
 
-(defn directory [^String path]
+(defn directory
  "Get the directory portion of a path"
+ [^String path]
  (let ((p ^File (fs/parent path))) (.getPath p)))
 
-(defn file-change-time [^String filename]
+(defn file-change-time
  "Return the last modified time of a file in seconds since epoch"
+ [^String filename]
  (/ (.lastModified (java.io.File. filename)) 1000))
 
 (define (with-temporary-file filename f)
@@ -398,11 +415,12 @@
 
 ;;; Timbre
 
-(defn setup-timbre-format []
+(defn setup-timbre-format
  "Replace the current timbre fmt-output-fn with one that is more
   verbse, provides colored output depending on the log level, and
   determines the class and function-name of the source of the log
   message."
+ []
  (log/set-config!
   [:fmt-output-fn]
   (fn [{:keys [level throwable message timestamp hostname ns]}
@@ -429,7 +447,7 @@
 
 (def string-join "Alias for s/join" s/join)
 
-(defn const [a] "Create a constant function" (fn [& _] a))
+(defn const "Create a constant function" [a] (fn [& _] a))
 
 (def o "Alias for clojure.core/comp. Function composition." comp)
 
@@ -441,20 +459,23 @@ implemented in terms of a left fold and reduce."
  ([f coll] (reduce #(f %2 %1) (reverse coll)))
  ([f val coll] (reduce #(f %2 %1) val (reverse coll))))
 
-(defn position-if [p l]
+(defn position-if
  "Return the index of the first position where predicate p is true in collection l."
+ [p l]
  (loop ((l l) (i 0))
   (conds ((null? l) false)
     ((p (first l)) i)
    (else (recur (rest l) (+ i 1))))))
-(defn position-if-not [p l]
+(defn position-if-not
  "Return the index of the first position where predicate p is false in collection l."
+ [p l]
  (loop ((l l) (i 0))
   (conds ((null? l) false)
     ((p (first l)) (recur (rest l) (+ i 1)))
    (else i))))
-(defn find-if [pred coll]
+(defn find-if
  "Return a value from collection coll where predicate pred is true."
+ [pred coll]
  (when (seq coll)
   (if (pred (first coll))
    (first coll)
@@ -471,9 +492,10 @@ implemented in terms of a left fold and reduce."
 (def list->string "Alias for s/join" s/join)
 (def string->list "Alias for clojure.core/seq" seq)
 
-(defn string->number [s]
+(defn string->number
  "Parse the string as a Double. Convert to an exact if possible. If
   the parse fails return false."
+ [s]
  (try (let [x (Double/parseDouble s)]
        (if (== x (round x))
         (round x)
@@ -484,8 +506,14 @@ implemented in terms of a left fold and reduce."
 (def list->vector vec)
 (def vector->list seq)
 
-(defn remove-if [f l] "Remove every element of l where f is true." (remove f l))
-(defn remove-if-not [f l] "Remove every element of l where f is true." (filter f l))
+(defn remove-if
+ "Remove every element of l where f is true."
+ [f l]
+ (remove f l))
+(defn remove-if-not
+ "Remove every element of l where f is true."
+ [f l]
+ (filter f l))
 
 (def string->list "Alias for clojure.core/seq" seq)
 
@@ -500,12 +528,12 @@ implemented in terms of a left fold and reduce."
 (def append "Append two collections, alias for clojure.core/concat" concat)
 (def string-append str)
 
-(defn join* [l] "Takes a collection of collections and flattens one level." (reduce append '() l))
+(defn join* "Takes a collection of collections and flattens one level." [l] (reduce append '() l))
 
 (defn remove-duplicates
+ "Remove duplicates (as determined by the binary predicate p) from collection x"
  ([x] (remove-duplicates = x))
  ([p x]
-    "Remove duplicates (as determined by the binary predicate p) from collection x"
     (loop ((x x) (c '()))
      (conds ((null? x) (reverse c))
       ((some #(p (first x) %) c) (recur (rest x) c))
@@ -519,7 +547,7 @@ implemented in terms of a left fold and reduce."
 (define (cadr a) (car (cdr a)))
 (define (cdddr a) (cdr (cdr (cdr a))))
 
-(defn format* [& more] "format and print" (print (apply format more)))
+(defn format* "format and print" [& more] (print (apply format more)))
 
 (defn replace-ith-vector [x i xi] (assoc x i xi))
 
