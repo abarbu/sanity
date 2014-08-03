@@ -43,9 +43,9 @@ Other broken behavior to hopefully be patched one day:
   return the empty element of the collection, not nil. This ripples
   out and causes many other bugs, including some in the clojure
   compiler. An example is where
-```clojure
-(~@(map (fn [x] (+ x 1)) '(1 2 3)))
-```
+  ```clojure
+  (~@(map (fn [x] (+ x 1)) '(1 2 3)))
+  ```
   returns, as expected `(2 3 4)` but as
   the list becomes empty we would expect `()` whereas
   instead you get something pretty broken `(nil)`
