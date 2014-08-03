@@ -39,7 +39,8 @@ correctly and returns
 instead of
 ```clojure
 '(nil)
-```.
+```
+.
 
 Individual functions are mostly documented, but this project as a
 whole does not yet have documentation.
