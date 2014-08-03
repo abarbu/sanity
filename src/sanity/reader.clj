@@ -30,7 +30,7 @@
  "Get a handle to a potentially protected/private field"
  (.get (doto (.getDeclaredField class field) (.setAccessible true)) nil))
 
-(defn- get-method' [class name & type-args]
+(defn get-method' [class name & type-args]
  "Get a handle to a potentially protected/private method"
  (let [f (doto (.getDeclaredMethod class name (into-array java.lang.Class type-args)) (.setAccessible true))]
   (fn [object & args] (.invoke f object (into-array args)))))
