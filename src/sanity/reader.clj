@@ -94,6 +94,9 @@
 (def lisp-with-meta (get-field LispReader "WITH_META"))
 (def compiler-resolve-symbol (get-method' Compiler "resolveSymbol" Symbol))
 
+(defn seq' [^clojure.lang.ISeq coll] (if (empty? coll) coll (seq coll)))
+(def sane-seq (Symbol/intern "sanity.reader" "seq'"))
+
 (declare syntaxQuote)
 
 (defn sqExpandList [^ISeq seq]
@@ -179,7 +182,7 @@
         (let [seq (RT/seq form)]
          (if (nil? seq)
           (RT/cons lisp-list nil)
-          (RT/list lisp-seq (RT/cons lisp-concat (sqExpandList seq))))))
+          (RT/list sane-seq (RT/cons lisp-concat (sqExpandList seq))))))
        (else (throw UnsupportedOperationException "Unknown Collection type"))))
      ((or (instance? Keyword form) (instance? Number form) (instance? Character form) (instance? String form)) form)
      (else (RT/list compiler-quote form)))]
