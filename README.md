@@ -42,10 +42,13 @@ Other broken behavior to hopefully be patched one day:
   `(seq [])` are paradoxically not equal. seq should
   return the empty element of the collection, not nil. This ripples
   out and causes many other bugs, including some in the clojure
-  compiler. An example is where ``(~@(map (fn [x] (+ x 1)) '(1 2 3)))`
-  returns, as expected `'(2 3 4)` but as
-  the list becomes empty we would expect `'()` whereas
-  instead you get something pretty broken `'(nil)`
+  compiler. An example is where
+```clojure
+(~@(map (fn [x] (+ x 1)) '(1 2 3)))
+```
+  returns, as expected `(2 3 4)` but as
+  the list becomes empty we would expect `()` whereas
+  instead you get something pretty broken `(nil)`
   because of this sloppy seq behavior.
 * `:keyword` on a map without the given key returns nil instead of failing. This
   hides bugs and causes errors to appear far away from their real
