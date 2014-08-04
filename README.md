@@ -69,3 +69,6 @@ Copyright © 2014 Andrei Barbu
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
+
+Yourkit supports this open source project through their
+[Java profiler](http://www.yourkit.com/java/profiler/index.jsp).
