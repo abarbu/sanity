@@ -28,7 +28,7 @@ It adds syntax for #\`. This is a quasiquote and works just like \`
 except that it does not qualify symbols with the current namespace.
 This default behaviour leads to a lot of strange and broken code.  Try
 out \`a vs #\`a (you would need to do \`~'a to get this (sane)
-behaviour otherwise). #\` also handles `#\`(~@())`
+behaviour otherwise). #\` also handles ``#`(~@())``
 correctly and returns `'()` instead of `'(nil)`.
 
 Individual functions are mostly documented, but this project as a
