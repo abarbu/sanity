@@ -169,7 +169,7 @@
 (defn degrees->radians [angle] (* two-pi-360 angle))
 (defn radians->degrees [angle] (* three-sixty-two-pi angle))
 
-(defn normalize-rotation 
+(defn normalize-rotation
  "Normalize a rotation in radians to be in the internal [π,-π)"
  [rotation]
  (conds ((> rotation pi) (normalize-rotation (- rotation two-pi)))
@@ -195,7 +195,7 @@
  ((fn [& a] a)) returns nil and not an empty sequence"
  (or (seq? c)
      ;; This is required because ((fn [& a] a)) returns nil, not an empty collection
-     (nil? c))) 
+     (nil? c)))
 
 (defn re-seq'
  "Returns a lazy sequence of successive matches of pattern in string.
@@ -229,7 +229,7 @@
 
 (defn substring?
  "Is the first argument a substring of the second?"
- [sub ^String str] 
+ [sub ^String str]
  (.contains str sub))
 (def substring
  "Alias for clojure.core/subs. ([str start-index] [str start-index end-index])"
@@ -270,6 +270,15 @@
  "Map f over the collection and reduce (foldl) with the binary function g."
  ([g f l] (reduce g (map f l)))
  ([g i f l & ls] (reduce g i (apply map f l ls))))
+
+(define append-map
+  "(append-map proc lis) is shorthand for
+   (apply append (map proc lis)), alias for clojure.core/mapcat."
+  mapcat)
+
+(define (filter-map proc . lists)
+  "Like clojure.core/map, but only keeps the true values."
+  (filter identity (apply map proc lists)))
 
 (defn read-object-from-file
  "Read a clojure object from the given file. Note that this uses the
