@@ -35,7 +35,9 @@ Individual functions are mostly documented, but this project as a
 whole does not yet have documentation.
 
 If you use Emacs and clojure-mode with this library this code will
-make syntax highlighting quite a bit better:
+make syntax highlighting quite a bit better (the last bit about the
+percent sign is just personal taste and doesn't have anything to do
+with sanity):
 
 ```elisp
 (put-clojure-indent 'define 'defun)
