@@ -34,6 +34,30 @@ correctly and returns `'()` instead of `'(nil)`.
 Individual functions are mostly documented, but this project as a
 whole does not yet have documentation.
 
+If you use Emacs and clojure-mode with this library this code will
+make syntax highlighting quite a bit better:
+
+```elisp
+(put-clojure-indent 'define 'defun)
+(put-clojure-indent 'cases 1)
+(put-clojure-indent 'conds 0)
+(put-clojure-indent 'unless 1)
+(put-clojure-indent 'lambda 'defun)
+(put 'define 'clojure-doc-string-elt 2)
+(font-lock-add-keywords 'clojure-mode
+                        `((,(concat
+                             "(\\(?:clojure.core/\\)?"
+                             (regexp-opt
+                              '("cases" "conds" "lambda") t)
+                             "\\>")
+                           1 font-lock-keyword-face)))
+(font-lock-add-keywords 'clojure-mode
+                        `((,(concat "\\<"
+                                    (regexp-opt '("%") t)
+                                    "\\>")
+                           0 font-lock-builtin-face)))
+```
+
 Other broken behavior to hopefully be patched one day:
 
 * `(seq '())` returns nil instead of failing. An example
