@@ -252,12 +252,7 @@
  "map for side effects with an index (second argument to f). Forces and discards the result."
  (dorun (map f l (range 0 (count l)))))
 
-(defn map-vector [f v & vs]
- "Map over collections and produce a vector"
- (loop [r [] i 0]
-  (if (= i (count v))
-   r
-   (recur (conj r (apply f (nth v i) (map (fn [v] (nth v i)) vs))) (+ i 1)))))
+(def map-vector "Alias for mapv" mapv)
 
 ;; TODO Document me
 (defn map-m-n [f m n] (loop ((i m) (c [])) (if (> i n) c (recur (+ i 1) (conj c (f i))))))
