@@ -2,7 +2,6 @@
  "Various improvements to clojure"
  (:require [clojure.tools.macro :refer [name-with-attributes]]
            [clojure.walk :refer [prewalk]]
-           [net.n01se.clojure-jna :as jna]
            [potemkin.namespaces :as p]
            [me.raynes.fs :as fs]
            [clojure.string :as s]
@@ -19,12 +18,6 @@
           IPersistentMap Util AFn PersistentVector Symbol IPersistentCollection IRecord
           IPersistentList IPersistentSet IPersistentVector Keyword IObj PersistentHashMap))
 (import '(java.io PushbackReader Reader))
-
-(defn error [message & data]
- "Throw an error with ex-throw which includes the given message and
- data. The data is available both in the message field as well as in a
- map {:data data}."
- (throw (ex-info (str message " " data) {:data data})))
 
 (defn get-field [class field]
  "Get a handle to a potentially protected/private field"

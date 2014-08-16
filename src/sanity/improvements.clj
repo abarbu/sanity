@@ -3,7 +3,6 @@
  (:refer-clojure :exclude [let loop count])
  (:require [clojure.tools.macro :refer [name-with-attributes]]
            [clojure.walk :refer [prewalk]]
-           [net.n01se.clojure-jna :as jna]
            [potemkin.namespaces :as p]
            [me.raynes.fs :as fs]
            [clojure.string :as s]

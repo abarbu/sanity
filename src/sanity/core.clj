@@ -1,9 +1,11 @@
 (ns sanity.core
  "Various improvements to clojure"
  (:refer-clojure :exclude [every?])
+ (:use [clj-native.direct :only [defclib loadlib typeof]]
+       [clj-native.structs :only [byref byval]]
+       [clj-native.callbacks :only [callback]])
  (:require [clojure.tools.macro :refer [name-with-attributes]]
            [clojure.walk :refer [prewalk]]
-           [net.n01se.clojure-jna :as jna]
            [potemkin.namespaces :as p]
            [me.raynes.fs :as fs]
            [clojure.string :as s]
@@ -13,6 +15,12 @@
 (use 'sanity.improvements)
 
 (import java.io.File)
+
+(defn error [message & data]
+ "Throw an error with ex-throw which includes the given message and
+ data. The data is available both in the message field as well as in a
+ map {:data data}."
+ (throw (ex-info (str message " " data) {:data data})))
 
 ;;; Namespaces
 
@@ -130,10 +138,15 @@
                     bssl)]
      ~@body))))
 
-(defn chdir [directory]
+
+(defclib libc (:libname "libc")
+ (:functions (c-chdir chdir [constchar*] int)))
+(loadlib libc)
+
+(define (chdir directory)
  "Change the directory of the JVM. This is not something the JVM
   supports out of the box, and your mileage may vary."
- (jna/invoke Integer c/chdir directory)
+ (unless (= (c-chdir directory) 0) (error "Can't chdir" directory))
  (System/setProperty "user.dir" directory))
 
 ;;; Numbers
