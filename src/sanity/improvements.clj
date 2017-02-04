@@ -56,7 +56,7 @@
           (core-let [s (seq coll)]
             (if s
               (if (chunked-seq? s)
-                (recur f 
+                (recur f
                        (.reduce (chunk-first s) f val)
                        (chunk-next s))
                 (recur f (f val (first s)) (next s)))
@@ -108,9 +108,9 @@
        (list (with-meta head {:dynamic true}))
        (list head)))
    ~@(if (and (seq? head) (string? docstring?))
-      body
+      (if (empty? body) (list docstring?) body)
       (cons docstring? body))))
- 
+
 (defmacro conds
  "A variant of cond with sane (lisp/scheme) bracketing. Unfortunately there's
   no way to detect if we want the clojure cond or the sane cond so we have to
@@ -187,13 +187,6 @@
                     ((empty? l) c)
                     ((p (first l)) (recur (rest l) (+ c 1)))
                     (else (recur (rest l) c))))))
-          (defn some?
-           "Is p true of every element of the collection(s) l(s)?"
-           [p l & ls]
-           (sanity.improvements/core-loop [l l ls ls]
-            (and (not (or (empty? l) (nil? l)))
-               (or (apply p (first l) (map first ls))
-                  (recur (rest l) (map rest ls))))))
 
           (defn every?
            "Is p true of every element of the collection(s) l(s)?"
