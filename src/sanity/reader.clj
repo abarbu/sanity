@@ -37,7 +37,7 @@
                 nil)]
   (aset dm (int ch) fun)))
 
-(defn string-reader [^Reader r doublequote]
+(defn string-reader [^Reader r doublequote opts pending-forms]
  "A reader macro for reading a literal string"
  (let ((sb (StringBuilder.)))
   (let ((ch (char (LispReader/read1 r))))
@@ -86,6 +86,12 @@
 (def lisp-vector (get-field LispReader "VECTOR"))
 (def lisp-with-meta (get-field LispReader "WITH_META"))
 (def compiler-resolve-symbol (get-method' Compiler "resolveSymbol" Symbol))
+(def ensure-pending (get-method' LispReader "ensurePending" Object))
+(def lisp-read (get-method' LispReader "read"
+                          java.io.PushbackReader Boolean/TYPE
+                          java.lang.Object java.lang.Character
+                          java.lang.Object Boolean/TYPE
+                          java.lang.Object java.lang.Object))
 
 (defn seq' [^clojure.lang.ISeq coll] (if (empty? coll) coll (seq coll)))
 (def sane-seq (Symbol/intern "sanity.reader" "seq'"))
@@ -102,10 +108,11 @@
                   (else (.cons ret (RT/list lisp-list (syntaxQuote item))))))
           (.next seq)))))
 
-(defn syntax-quote [reader backquote]
+(defn syntax-quote [^PushbackReader reader backquote opts pending-forms]
  (let [r (cast PushbackReader reader)]
   (try (Var/pushThreadBindings (clojure.lang.RT/map (into-array Object [lisp-gensym-env PersistentHashMap/EMPTY])))
-       (syntaxQuote (cast Object (read r true nil true)))
+       ;; FIXME This breaks pending forms, should use lisp-read from above as the Java code does
+       (syntaxQuote (cast Object (read opts r)))
        (finally (Var/popThreadBindings)))))
 
 (defn flattenMap [form]
@@ -176,7 +183,7 @@
          (if (nil? seq)
           (RT/cons lisp-list nil)
           (RT/list sane-seq (RT/cons lisp-concat (sqExpandList seq))))))
-       (else (throw UnsupportedOperationException "Unknown Collection type"))))
+       (else (throw (UnsupportedOperationException. "Unknown Collection type")))))
      ((or (instance? Keyword form) (instance? Number form) (instance? Character form) (instance? String form)) form)
      (else (RT/list compiler-quote form)))]
   (if (and (instance? IObj form) (not (nil? (RT/meta form))))

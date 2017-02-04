@@ -144,7 +144,7 @@
                 as)]
             `(case ~obj ~@r))))
 
-(defmacro lambda [args & body] "A variant of fn that uses lisp/scheme bracket."
+(defmacro lambda "A variant of fn that uses lisp/scheme bracket." [args & body]
  `(~'fn ~(vec (replace {'. '&} args)) ~@body))
 
 ;; Now we evaluate in clojure.core. We can't just replace these macros
@@ -187,10 +187,26 @@
                     ((empty? l) c)
                     ((p (first l)) (recur (rest l) (+ c 1)))
                     (else (recur (rest l) c))))))
-          
-          (defn every? [p l & ls]
+          (defn some?
            "Is p true of every element of the collection(s) l(s)?"
+           [p l & ls]
+           (sanity.improvements/core-loop [l l ls ls]
+            (and (not (or (empty? l) (nil? l)))
+               (or (apply p (first l) (map first ls))
+                  (recur (rest l) (map rest ls))))))
+
+          (defn every?
+           "Is p true of every element of the collection(s) l(s)?"
+           [p l & ls]
            (sanity.improvements/core-loop [l l ls ls]
             (or (or (empty? l) (nil? l))
                 (and (apply p (first l) (map first ls))
-                     (recur (rest l) (map rest ls))))))))))
+                     (recur (rest l) (map rest ls))))))
+          
+          (defn some?
+           "Is p true of every element of the collection(s) l(s)?"
+           [p l & ls]
+           (loop [l l ls ls]
+            (and (not (or (empty? l) (nil? l)))
+               (or (apply p (first l) (map first ls))
+                  (recur (rest l) (map rest ls))))))))))
